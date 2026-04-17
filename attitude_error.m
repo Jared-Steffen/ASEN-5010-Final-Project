@@ -1,4 +1,4 @@
-function [mrpBR,BwBR] = attitude_error(t,mrpBN,BwBN,reference_frame)
+function [mrpBR,BwBR,mrpRN,BwRN] = attitude_error(t,mrpBN,BwBN,reference_frame)
 % This function computes the attitude error between the body frame and a
 % reference frame
 
@@ -28,8 +28,18 @@ BwBR = BN*NwBR;
 
 % Get mrpBR
 BR = BN*RN';
-EPs = DCMtoEP(BR);
-mrpBR = EPtoMRP(EPs);
+EPs_BR = DCMtoEP(BR);
+mrpBR = EPtoMRP(EPs_BR);
+
+% Get references
+BwRN = BN*NwRN;
+EPs_RN = DCMtoEP(RN);
+mrpRN_noswitch = EPtoMRP(EPs_RN);
+if norm(mrpRN_noswitch) > 1
+    mrpRN = -mrpRN_noswitch./norm(mrpRN_noswitch);
+else
+    mrpRN = mrpRN_noswitch;
+end
 
 end
 
